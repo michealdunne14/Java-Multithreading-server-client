@@ -6,6 +6,7 @@ import com.mysql.cj.util.StringUtils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -71,6 +72,15 @@ public class Client {
                 public void actionPerformed(ActionEvent e) {
                     searchStudents();
                 }
+            });
+            
+            clientGUI.getmExit().addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					clientGUI.getFrame().dispatchEvent(new WindowEvent(clientGUI.getFrame(), WindowEvent.WINDOW_CLOSING));
+				}
+            	
             });
 
         }catch (Exception e){

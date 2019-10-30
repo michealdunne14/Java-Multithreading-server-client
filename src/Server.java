@@ -115,6 +115,9 @@ class ClientAssist extends Thread {
                 }
 			} catch (SQLException | IOException e) {
 				e.printStackTrace();
+				jTextArea.append(new Date() + " Lost Connection to Client \n");
+				this.stop();
+
 			}
 		}
 	}

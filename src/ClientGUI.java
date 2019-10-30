@@ -15,9 +15,10 @@ public class ClientGUI {
     private JLabel firstLabel = new JLabel("Test");
     private JLabel surLabel = new JLabel("Test");
     private JLabel searchLabel = new JLabel("Search By Surname");
+    
 
 
-    private JButton mExecute,mNext,mPrevious,mClear,mSearch;
+    private JButton mExecute,mNext,mPrevious,mClear,mSearch,mExit;
 
     public ClientGUI() {
 //       Sets the Frame
@@ -48,6 +49,9 @@ public class ClientGUI {
         searchUser.setBounds(170, 250, 200, 30);
 //      Sets up the text area
         jta.setBounds(400, 100, 200, 300);
+        
+        mExit = new JButton("Exit");
+        mExit.setBounds(50, 300, 100, 30);
 
 //      Labels
         sidLabel.setBounds(200, 100, 200, 30);
@@ -75,6 +79,8 @@ public class ClientGUI {
         frame.add(firstLabel);
         frame.add(surLabel);
 
+        
+        frame.add(mExit);
         frame.add(searchUser);
         frame.add(mSearch);
         frame.add(mNext);
@@ -87,6 +93,10 @@ public class ClientGUI {
         frame.setLayout(null);
         frame.setVisible(true);
 
+    }
+    
+    public JButton getmExit() {
+        return mExit;
     }
 
     public JLabel getSearchLabel() {
