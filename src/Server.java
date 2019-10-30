@@ -1,3 +1,7 @@
+/*
+* @author Micheal Dunne
+* */
+
 import java.awt.BorderLayout;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,17 +21,12 @@ public class Server extends JFrame {
 
 	private ServerSocket serverSocket;
 
-	//	table name
-	private final String tableNameUsers = "USERS";
-	//	table name
-	private final String tableNameStudent = "STUDENTS";
-
 	public static void main(String[] args) {
 		new Server();
 	}
 	
 	public Server() {
-		
+//		Sets the frame Layout and adds the text area
 		setLayout(new BorderLayout());
 		add(new JScrollPane(jta),BorderLayout.CENTER);
 		
@@ -72,40 +71,49 @@ class ClientAssist extends Thread {
 	public void run() {
 		while(true){
 			try {
+//			    Reads from the client
 				String inputStream = inputFromClient.readUTF();
-				jTextArea.append("Reading From Client \n");
+				jTextArea.append(new Date() + " Reading From Client \n");
 
 				String[] items = inputStream.split("\\s*,\\s*");
-
+//              Checks is item is valid
 				if (items[0].equals("validuser")){
-					jTextArea.append("Checking Valid User \n");
+					jTextArea.append(new Date() + " Checking Valid User \n");
+//					Prepared Statement
 					PreparedStatement preparedStatement = connections.getConnection().prepareStatement("SELECT * FROM users WHERE UID=?");
 					preparedStatement.setInt(1,Integer.parseInt(items[1]));
-
+//                  Result Set
 					ResultSet resultsetUser = preparedStatement.executeQuery();
-					jTextArea.append("No User with ID " + items[1] + "\n");
 					String combineduser = "";
 					while (resultsetUser.next()) {
 						User user = new User(resultsetUser.getInt("UID"), resultsetUser.getString("UNAME"));
 						combineduser += "validuser," + user.getUid() + "," + user.getUname();
-						jTextArea.append("Valid User: " + user.getUname() + "\n");
+						jTextArea.append(new Date() + " Valid User: " + user.getUname() + "\n");
+					}
+					if (combineduser.equals("")){
+						jTextArea.append(new Date() + "No User with ID " + items[1] + "\n");
 					}
 					outputToClient.writeUTF(combineduser);
+
 				}else if (items[0].equals("nextstudent")){
-					jTextArea.append("Getting Students \n");
+					jTextArea.append(new Date() + " Getting Students \n");
+//					Prepared Statement
 					PreparedStatement preparedStmt = connections.getConnection().prepareStatement("SELECT * FROM students");
 					ResultSet studentResult = preparedStmt.executeQuery();
 					combiningString(studentResult);
-					jTextArea.append("Got Students \n");
+					jTextArea.append(new Date() + " Got Students \n");
+
 				}else if (items[0].equals("search")){
-					jTextArea.append("Searching for Student \n");
+					jTextArea.append(new Date() + " Searching for Student \n");
+//					Prepared statement
 					PreparedStatement preparedStmtStudent = connections.getConnection().prepareStatement("SELECT * FROM students WHERE SNAME=?");
 					preparedStmtStudent.setString(1,items[1]);
 					ResultSet resultSet = preparedStmtStudent.executeQuery();
 					combiningString(resultSet);
-				}
+				}else {
+                    jTextArea.append(new Date() + " 404 error \n");
+                }
 			} catch (SQLException | IOException e) {
-				jTextArea.append("404 error \n");
 				e.printStackTrace();
 			}
 		}
@@ -113,9 +121,15 @@ class ClientAssist extends Thread {
 
 	private void combiningString(ResultSet resultSet) throws SQLException, IOException {
 		String combinedString = "";
+//		Adds students to pass back to client.
 		while (resultSet.next()){
 			Students students = new Students(resultSet.getInt("SID"),resultSet.getInt("STUD_ID"),resultSet.getString("FNAME"),resultSet.getString("SNAME"));
 			combinedString += students.getSid() + "," + students.getStudid() + "," + students.getFirstname() + "," + students.getSurname()  + ",";
+		}
+		if(combinedString.equals("")){
+			jTextArea.append(new Date() + " No Students Found \n");
+		}else {
+			jTextArea.append(new Date() + " Students Found \n");
 		}
 		outputToClient.writeUTF(combinedString);
 	}

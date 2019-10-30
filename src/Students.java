@@ -1,3 +1,7 @@
+/*
+ * @author Micheal Dunne
+ * */
+
 public class Students {
     private int sid,studid;
     private String firstname,surname;
